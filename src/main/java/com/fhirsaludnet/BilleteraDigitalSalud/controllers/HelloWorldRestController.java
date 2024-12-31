@@ -8,6 +8,7 @@ public class HelloWorldRestController {
 
     @GetMapping({"/hello", "/hw", "hola"})
     public String helloWorld(){
+        System.out.println("Solicitud ejecutada!");
         return "Hola mundo de Spring Boot";
     }
 }
