@@ -2,8 +2,11 @@ package com.fhirsaludnet.BilleteraDigitalSalud.controllers;
 
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +32,9 @@ public class CustomerController {
      */
     //@GetMapping("/customers")
     @RequestMapping(value = "/customers", method = RequestMethod.GET)
-    public List<Customer> getAllCustomers() {
+    public ResponseEntity<List<Customer>> getAllCustomers() {
         //* Devuelve la lista de clientes serializada en formato JSON
-         return customers;
+         return ResponseEntity.ok(customers) ;
     }
 
     /**
@@ -44,12 +47,18 @@ public class CustomerController {
      * @return El objeto {@link Customer} con el identificador proporcionado.
      */
     @GetMapping("/customers/id/{id}")
-    public Customer getCustomerById(@PathVariable String id) {
-        //* Devuelve el cliente con el id especificado
-        return customers.stream()
+    public ResponseEntity<?> getCustomerById(@PathVariable String id) {
+        // Buscar el cliente por su ID
+        var customer = customers.stream()
                 .filter(c -> c.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new CustomerNotFoundException("Cliente no encontrado con ID: " + id));
+                .findFirst();
+        if(customer.isEmpty()){
+            // Si el cliente no está presente, devuelve un 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente con id " + id + " no existe");
+        }
+
+        // Si el cliente está presente, devuelve un 200
+        return ResponseEntity.ok(customer.get());
     }
 
     /**
@@ -62,19 +71,45 @@ public class CustomerController {
      * @return El objeto {@link Customer} con el nombre proporcionado.
      */
     @GetMapping("/customers/name/{name}")
-    public Customer getCustomerByName(@PathVariable String name) {
+    public ResponseEntity<?> getCustomerByName(@PathVariable String name) {
         //* Devuelve el cliente con el nombre especificado
-        return customers.stream()
+        var customer = customers.stream()
                 .filter(c -> c.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElseThrow(() -> new CustomerNotFoundException("Cliente no encontrado con Nombre: " + name));
+                .findFirst();
+
+        if(customer.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no existe");
+        }
+        // Si el cliente no está presente, devuelve un 404
+        return ResponseEntity.ok(customer.get());
+
     }
 
     @PostMapping("/customers")
-    public Customer addCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<?> addCustomer(@RequestBody Customer customer) {
+        // verificar que Username no exista en la lista
+        var existingCustomer = customers.stream()
+                .filter(c -> c.getUsername().equals(customer.getUsername()))
+                .findFirst();
+
+        if (existingCustomer.isPresent()) {
+            // Si el cliente ya existe, retorna un 409 personalizado
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("El cliente con UserName:" + customer.getUsername() + " ya existe");
+        }
         //* Agrega un nuevo cliente a la lista
         customers.add(customer);
-        return customer;
+        // Crear una respuesta con el código 201 PERSONALIZADO
+        //return ResponseEntity.status(HttpStatus.CREATED).body("Cliente creado exitosamente:"+ customer.getUsername());
+
+        // Construir la URI para individualizar el recursos creado
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(customer.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(customer);
+
     }
 
     /**
@@ -88,13 +123,24 @@ public class CustomerController {
      * @return El objeto {@link Customer} con los datos actualizados.
      */
     @PutMapping("/customers/{id}")
-    public Customer updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
+    public ResponseEntity<?> updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
         //* Actualiza los datos de un cliente
-        Customer existingCustomer = getCustomerById(id);
-        existingCustomer.setName(customer.getName());
-        existingCustomer.setUsername(customer.getUsername());
-        existingCustomer.setPassword(customer.getPassword());
-        return existingCustomer;
+        var existingCustomer = customers.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst();
+        if (existingCustomer.isEmpty()) {
+            // Si no se encuentra el cliente, retorna un 404ResponseEntity Personalizado
+            //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no existe " + id);
+            // Retorno ResponseEntity simplificado
+            return ResponseEntity.notFound().build();
+        }
+        // Si el cliente existe, actualiza sus datos
+        var customerToUpdate = existingCustomer.get(); // Extraemos el valor del Optional
+        customerToUpdate.setName(customer.getName());
+        customerToUpdate.setUsername(customer.getUsername());
+        customerToUpdate.setPassword(customer.getPassword());
+        // Retorna un mensaje con el código 204 ResponseEntity simplificado
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -105,9 +151,19 @@ public class CustomerController {
      * @param id El identificador único del cliente a eliminar.
      */
     @DeleteMapping("/customers/{id}")
-    public void deleteCustomer(@PathVariable String id) {
+    public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
         //* Elimina un cliente de la lista
-        customers.removeIf(c -> c.getId().equals(id));
+        boolean borroConExito = customers.removeIf(c -> c.getId().equals(id));
+        if(!borroConExito){
+            // Si no se encuentra el cliente, retorna un 404 personalizado
+            //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente con Id: " + id + "  no existe");
+            // Retorno 404 ResponseEntity simplificado
+            return ResponseEntity.notFound().build();
+        }
+        // Retorna un mensaje con el código 204 con contenido personalizado
+        //return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Cliente fue eliminado exitosamente");
+        // Retorna un mensaje con el código 204 ResponseEntity simplificado
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -121,27 +177,30 @@ public class CustomerController {
      * @return El objeto {@link Customer} con los datos actualizados.
      */
     @PatchMapping("/customers/{id}")
-    public Customer patchCustomer(@PathVariable String id, @RequestBody Customer customer) {
+    public ResponseEntity<?> patchCustomer(@PathVariable String id, @RequestBody Customer customer) {
         //* Actualiza los datos de un cliente
-        Customer existingCustomer = getCustomerById(id);
+        var existingCustomer = customers.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst();
+        if (existingCustomer.isEmpty()) {
+            // Si no se encuentra el cliente, retorna un 404 personalizado
+                //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no existe");
+            // Retorno ResponseEntity simplificado
+            return ResponseEntity.notFound().build();
+           }
+        // Si el cliente existe, actualiza sus datos
+        var customerToUpdate = existingCustomer.get(); // Extraemos el valor del Optional
+
         if (customer.getName() != null) {
-            existingCustomer.setName(customer.getName());
+            customerToUpdate.setName(customer.getName());
         }
         if (customer.getUsername() != null) {
-            existingCustomer.setUsername(customer.getUsername());
+            customerToUpdate.setUsername(customer.getUsername());
         }
         if (customer.getPassword() != null) {
-            existingCustomer.setPassword(customer.getPassword());
+            customerToUpdate.setPassword(customer.getPassword());
         }
-        return existingCustomer;
+        return ResponseEntity.noContent().build();
     }
 
-
-
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Customer not found")
-    public static class CustomerNotFoundException extends RuntimeException {
-        public CustomerNotFoundException(String message) {
-            super(message);
-        }
-    }
 }
