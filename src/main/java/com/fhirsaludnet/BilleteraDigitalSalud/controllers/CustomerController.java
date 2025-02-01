@@ -12,7 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api") // Unificación de Rutas
+//@RequestMapping("/api") // Unificación de Rutas
+// Manejado por server.servlet.context-path=/sistema/api/v1 de versiones
+
 public class CustomerController {
 
     private List<Customer> customers = new ArrayList<>(Arrays.asList(
