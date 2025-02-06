@@ -9,6 +9,10 @@ public class Customer {
     private String password;
 
     // constructor
+    public Customer() {
+    }
+
+    // constructor
     public Customer(String id, String name, String username, String password) {
         this.id = id;
         this.name = name;

@@ -7,6 +7,10 @@ public class Product {
     private Integer stock;
 
     // constructor
+    public Product() {
+    }
+
+    // constructor
     public Product(Integer id, String name, Double price, Integer stock) {
         this.id = id;
         this.name = name;
