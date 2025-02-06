@@ -5,6 +5,7 @@ import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import com.fhirsaludnet.BilleteraDigitalSalud.service.CustomerService;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CustomerControllerV3 {
 
     @Autowired
+    @Qualifier("jsonResourceService")
     private CustomerService customerService;
 
     @GetMapping

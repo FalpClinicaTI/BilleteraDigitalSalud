@@ -1,10 +1,12 @@
 package com.fhirsaludnet.BilleteraDigitalSalud.service;
 
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Product;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class ProductServiceImpl implements ProductService {
 

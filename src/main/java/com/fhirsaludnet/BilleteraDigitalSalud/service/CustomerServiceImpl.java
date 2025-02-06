@@ -4,7 +4,7 @@ import java.util.*;
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("listResourceService")
 public class CustomerServiceImpl implements CustomerService {
     private final List<Customer> customers = new ArrayList<>(Arrays.asList(
             new Customer("11", "Fernando Edwards", "Fernando", "1234"),

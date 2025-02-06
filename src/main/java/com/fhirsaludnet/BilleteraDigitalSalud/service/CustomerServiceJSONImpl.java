@@ -3,6 +3,7 @@ package com.fhirsaludnet.BilleteraDigitalSalud.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 @Primary
-@Service
+@Service("jsonResourceService")
 
 public class CustomerServiceJSONImpl implements CustomerService {
 
