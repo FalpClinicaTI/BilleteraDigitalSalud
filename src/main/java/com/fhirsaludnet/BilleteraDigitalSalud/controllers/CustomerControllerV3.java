@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v3/customers")
-
 public class CustomerControllerV3 {
 
     @Autowired

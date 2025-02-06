@@ -18,7 +18,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customers;
     }
 
-
     @Override
     public Optional<Customer> getCustomerById(String id) {
         return  customers.stream()

@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/v2/customers")
 public class CustomerControllerV2 {
-
     // Inyección de dependencias @Autowired IoC (Inversion of Control)
     // Inyección por campo
     @Autowired

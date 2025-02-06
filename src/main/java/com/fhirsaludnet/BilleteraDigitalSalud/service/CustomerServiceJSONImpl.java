@@ -23,6 +23,7 @@ public class CustomerServiceJSONImpl implements CustomerService {
         return getCustomers();
     }
 
+
     private List<Customer> getCustomers() {
         try{
             // Leer el archivo JSON y convertirlo en una lista de clientes
