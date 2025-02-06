@@ -2,9 +2,12 @@ package com.fhirsaludnet.BilleteraDigitalSalud.service;
 import java.util.*;
 
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service("listResourceService")
+@ConditionalOnProperty(name = "service.products", havingValue = "list")
+
 public class CustomerServiceImpl implements CustomerService {
     private final List<Customer> customers = new ArrayList<>(Arrays.asList(
             new Customer("11", "Fernando Edwards", "Fernando", "1234"),

@@ -18,7 +18,8 @@ public class CustomerControllerV2 {
     // Inyección de dependencias @Autowired IoC (Inversion of Control)
     // Inyección por campo
     @Autowired
-    @Qualifier("listResourceService")
+    // Inyección está controlada por @ConditionalOnProperty
+    //@Qualifier("listResourceService")
     private CustomerService customerService;
 
     /**

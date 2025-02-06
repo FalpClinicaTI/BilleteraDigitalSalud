@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 @Primary
 @Service("jsonResourceService")
-
+@ConditionalOnProperty(name = "service.products", havingValue = "json")  // Parametro en application.properties
 public class CustomerServiceJSONImpl implements CustomerService {
 
     @Override

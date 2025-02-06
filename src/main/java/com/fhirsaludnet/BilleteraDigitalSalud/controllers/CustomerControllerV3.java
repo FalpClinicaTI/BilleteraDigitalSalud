@@ -19,7 +19,8 @@ import java.util.List;
 public class CustomerControllerV3 {
 
     @Autowired
-    @Qualifier("jsonResourceService")
+    // Inyección está controlada por @ConditionalOnProperty
+    //@Qualifier("jsonResourceService")
     private CustomerService customerService;
 
     @GetMapping
