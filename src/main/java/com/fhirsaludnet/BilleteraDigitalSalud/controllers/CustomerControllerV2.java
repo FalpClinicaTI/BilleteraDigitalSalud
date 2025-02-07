@@ -4,6 +4,7 @@ import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import com.fhirsaludnet.BilleteraDigitalSalud.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,8 +19,9 @@ public class CustomerControllerV2 {
     // Inyección de dependencias @Autowired IoC (Inversion of Control)
     // Inyección por campo
     @Autowired
-    // Inyección está controlada por @ConditionalOnProperty
-    //@Qualifier("listResourceService")
+    @Lazy  //// Se creará solo cuando se use por primera vez
+    @Qualifier("listResourceService") ////// Especificamos cuál inyectar con @Qualifier
+
     private CustomerService customerService;
 
     /**

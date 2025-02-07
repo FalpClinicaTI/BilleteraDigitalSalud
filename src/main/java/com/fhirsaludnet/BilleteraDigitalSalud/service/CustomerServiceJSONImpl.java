@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Primary
+
 @Service("jsonResourceService")
-@ConditionalOnProperty(name = "service.products", havingValue = "json")  // Parametro en application.properties
+@Lazy  // Lazy initialization
 public class CustomerServiceJSONImpl implements CustomerService {
 
     @Override
