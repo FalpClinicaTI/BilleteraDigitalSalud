@@ -1,6 +1,7 @@
 package com.fhirsaludnet.BilleteraDigitalSalud.controllers;
 
 
+import com.fhirsaludnet.BilleteraDigitalSalud.configurations.ExternalizedConfigurations;
 import com.fhirsaludnet.BilleteraDigitalSalud.domain.Customer;
 import com.fhirsaludnet.BilleteraDigitalSalud.service.CustomerService;
 import org.apache.tomcat.util.json.JSONParser;
@@ -24,9 +25,15 @@ public class CustomerControllerV3 {
     @Qualifier("jsonResourceService")  //// Especificamos cuál inyectar con @Qualifier
     private CustomerService customerService;
 
+
+    @Autowired
+    private ExternalizedConfigurations externalizedConfigurations;
+
+
     @GetMapping
     public ResponseEntity<List<Customer>> getCustomers(){
 
+        System.out.println(externalizedConfigurations.toString());
         List<Customer> customers = customerService.getCustomer();
         return customers.isEmpty() ?
                 ResponseEntity.noContent().build() :
